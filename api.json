@@ -1,0 +1,374 @@
+{
+    "r": [
+        {
+            "request": "GET server_name/storage/",
+            "request_payload": "",
+            "Response": [
+                {
+                    "strg_id": 1234,
+                    "location": "123 st",
+                    "name": "safa",
+                    "proponent": "Ahmed",
+                    "Phone": "054503450002"
+                },
+                {
+                    "strg_id": 1234,
+                    "location": "123 st",
+                    "name": "safa",
+                    "proponent": "Ahmed",
+                    "Phone": "054503450002"
+                }
+            ]
+        },
+        {
+            "request": "POST server_name/storage/create",
+            "request_payload": {
+                "location": "123 st",
+                "name": "Safa",
+                "proponent": "Ahmed",
+                "phone": "054503450002",
+                "capacity": "150"
+            },
+            "Response": 
+                {
+                    "strg_id": "1234"
+                }
+            
+        },
+        {
+            "request": "POST /storage/edit",
+            "request_payload": 
+                {   "strg_id": "1234",
+                    "location": "123 st",
+                    "name": "Safa",
+                    "proponent": "Ahmed",
+                    "phone": "054503450002",
+                    "capacity": "xx"
+                }
+            ,
+            "Response": [
+                {
+                    "strg_id": "1234",
+                    "status": "ok"
+                }
+            ]
+        },
+        {
+            "request": "POST /storage/delete",
+            "request_payload": 
+                { 
+                    "strg_id": "1234"
+                }
+            ,
+            "Response": {
+                "status": "ok"
+            }
+        },
+        {
+            "request": "GET /facility/",
+            "request_payload": "",
+            "Response": [
+                {
+                    "strg_id": 1234,
+                    "location": "123 st",
+                    "name": "safa",
+                    "proponent": "Ahmed",
+                    "phone": "054503450002",
+                    "capacity": "188"
+                },
+                {
+                    "strg_id": 12267,
+                    "location": "123 st",
+                    "name": "safa",
+                    "proponent": "Khalid",
+                    "phone": "054503450002",
+                    "capacity": "188"
+                }
+            ]
+        },
+        {
+            "request": "GET /stored_vehicles/",
+            "request_payload": {"strg_id": 12267},
+            "Response": [
+                {   
+                    "vin": 12341223,
+                    "model": "GMC",
+                    "color": "blue",
+                    "arrival_date": "18/8/2023"
+                },
+                {   
+                    "vin": 12344754568,
+                    "model": "GMC",
+                    "color": "Black",
+                    "arrival_date": "18/8/2023"
+                }
+            ]
+        },
+        {
+            "request": "GET /user/",
+            "request_payload": "",
+            "Response": [
+                {
+                    "user_id": 0,
+                    "name": "Nada",
+                    "role": "Admin",
+                    "status": "Active",
+                    "email": "nada@gmail.com",
+                    "phone": "5470338870053",
+                    "branch": "Safa"
+                },
+                {
+                    "user_id": 1,
+                    "name": "Khalid",
+                    "role": "Admin",
+                    "status": "Active",
+                    "email": "k@gmail.com",
+                    "phone": "5470338870053",
+                    "branch": "Safa"
+                }
+            ]
+        },
+        {
+            "request": "POST /user/create",
+            "request_payload": 
+                {
+                    "name": "Nada",
+                    "email": "nada@gmail.com",
+                    "phone": "5470338870053",
+                    "role": "Admin",
+                    "branch": "Safa"
+                }
+            ,
+            "Response": 
+                {
+                    "user_id": 0
+                }
+            
+        },
+        {
+            "request": "POST /user/edit ",
+            "request_payload": 
+                {
+                    "user_id": 0,
+                    "name": "Nada",
+                    "email": "nada@gmail.com",
+                    "phone": "547030370053",
+                    "role": "Admin",
+                    "branch": "Safa",
+                    "status": "Active"
+                }
+            ,
+            "Response": 
+                {
+                    "usr_id": 0
+                }
+            
+        },
+        {
+            "request": "POST /user/delete",
+            "request_payload": 
+                {
+                    "user_id": 0
+                }
+            ,
+            "Response": {
+                "status": {"status:": "ok"}
+            }
+        },
+        {
+            "request": "GET /tasks/",
+            "request_payload": "",
+            "Response": [
+                {   
+                    "task_id": 12,
+                    "name": "Windshield Wipers",
+                    "type": "check",
+                    "repetition": "14 days"
+                },
+                {   
+                    "task_id": 13,
+                    "name": "Tire Pressure",
+                    "type": "measure",
+                    "repetition": "14 days"
+                }
+            ]
+        },
+            {
+                "request": "GET routine/",
+                "request_payload": "",
+                "Response": [
+                    {
+                        "routine_id": 12,
+                        "name": "General Car Check",
+                        "model": "GM_All"
+                    },
+                    {
+                        "routine_id": 12,
+                        "name": "Elictric Car Check",
+                        "model": "GM_electric_All"
+                    }
+                ]
+            },
+        {
+            "request": "POST /task/create",
+            "request_payload": {
+                "name": "Tire Pressure",
+                "repetition": "14",
+                "type": "measure",
+                "num_of_attrib": "4",
+                "attrib_name_1": "Front-Right",
+                "attrib_name_2": "Front-Left",
+                "attrib_name_3": "Rear-Right",
+                "attrib_name_4": "Rear-Left",
+                "Picture": "yes"
+            },
+            "Response": [
+                {
+                    "task_id": 1234
+                }
+            ]
+        },
+        {
+            "request": "POST /task/create",
+            "request_payload": {
+                "name": "Windshield Wipers",
+                "repetition": "14",
+                "type": "check",
+                "Picture": "yes"
+            },
+            "Response": [
+                {
+                    "task_id": 122224
+                }
+            ]
+        },
+        {
+            "request": "POST /task/edit",
+            "request_payload": {
+                "task_id": 122224,
+                "name": "Windshield Wipers",
+                "repetition": "14",
+                "type": "check",
+                "Picture": "yes"
+            },
+            "Response": [
+                {
+                    "task_id": 1234
+                }
+            ]
+        },
+        {
+            "request": "POST /task/delete",
+            "request_payload": {
+                "task_id": 122224
+            },
+            "Response": {"status": "ok"}
+        },
+        {
+            "request": "POST /routine/create",
+            "request_payload": {
+                "name": "General Car Check",
+                "model": "GM_ALL",
+                "tasks": [
+                    1222,
+                    13144
+                ]
+            },
+            "Response": {
+                "routine_id": 1234
+            }
+        },
+        {
+            "request": "POST /routine/edit ",
+            "request_payload": {
+                "routine_id": 1234,
+                "name": "General Car Check",
+                "model": "GM_ALL",
+                "tasks": [
+                    1234,
+                    4567
+                ]
+            },
+            "Response": {"status": "ok"}
+        },
+
+        {
+            "request": "GET /jobs/",
+            "request_payload": {"strg_id": 117},
+            "Response": [
+                {
+                    "job_id": 67,
+                    "car_id": 1234,
+                    "due": "11/10/2023",
+                    "tasks": [
+                        1123,
+                        12656
+                    ],
+                    "modle": "GMC YOKON 2023"
+                },
+                {
+                    "job_id": 67,
+                    "car_id": 1234,
+                    "due": "11/10/2023",
+                    "tasks": [
+                        1123,
+                        12656
+                    ],
+                    "modle": "GMC YOKON 2023"
+                }
+            ]
+        },
+        {
+            "request": "GET /vehicle/",
+            "request_payload": {"car_id": 4367},
+            "Response": {
+                "make": "GMC YOKON 2023",
+                "storage_location": "N94",
+                "arrival_date": "19/12/2023",
+                "last_maintenance_date": "19/12/2023",
+                "VIN": "10F0GH1038475",
+                "job_id": 67,
+                "tasks": [
+                    1123,
+                    12656
+                ]
+            }
+        },
+        {
+            "request": "POST /job/log",
+            "request_payload": {
+                "job_id": 67,
+                "log_date": "19/12/2023",
+                "job_status": true,
+                "tasks": {
+                    "1123": {
+                            "task_value": "{'Front-Left': 35, 'Front-Right': 35, 'Rear-Left': 35, 'Rear-Left': 35}",
+                            "task_notes": "",
+                            "task_pic": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ"
+                            },
+                    "12656": {
+                        "task_value": "Good",
+                        "task_notes": "battery is fine",
+                        "task_pic": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ"
+                        }
+                }
+            },
+            "Response": {"status": "ok"}
+        },
+        {
+            "request": "",
+            "request_payload": "",
+            "Response": ""
+        },
+        {
+            "request": "",
+            "request_payload": "",
+            "Response": ""
+        },
+        {
+            "request": "",
+            "request_payload": "",
+            "Response": ""
+        }
+    ]
+}

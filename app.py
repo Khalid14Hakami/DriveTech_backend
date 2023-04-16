@@ -2,10 +2,13 @@
 
 import argparse
 import os
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify, make_response, g
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
 from routes import request_api
+from flask_mysqldb import MySQL
+
+
 
 APP = Flask(__name__)
 
@@ -24,6 +27,8 @@ APP.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 
 
 APP.register_blueprint(request_api.get_blueprint())
+
+
 
 
 @APP.errorhandler(400)
@@ -50,6 +55,42 @@ def handle_500_error(_error):
     return make_response(jsonify({'error': 'Server error'}), 500)
 
 
+def connect_db():
+    """Connects to the specific database."""
+    #Creating a connection cursor
+    print("""XXXXXXXX Xxxxxxxxmxmxmxmxx""")
+    cursor = mysql.connection
+    return cursor
+
+# import functools
+# def json_response(action_func):
+#     @functools.wraps(action_func)
+#     # def create_json_response(*args, **kwargs):
+#     def get_db(*args, **kwargs):
+#         """Opens a new database connection if there is none yet for the
+#         current application context.
+#         """
+#         if not hasattr(g, 'mysql_db'):
+#             g.mysql_db = connect_db()
+#         return g.sqlite_db
+
+@APP.before_request
+def get_db():
+    """Opens a new database connection if there is none yet for the
+    current application context.
+    """
+    if not hasattr(g, 'mysql_db'):
+        g.mysql_db = connect_db()
+
+
+@APP.teardown_appcontext
+def close_db(error):
+    """Closes the database again at the end of the request."""
+    if hasattr(g, 'mysql_db'):
+        # g.mysql_db.close()
+        pass
+
+
 if __name__ == '__main__':
 
     PARSER = argparse.ArgumentParser(
@@ -61,9 +102,18 @@ if __name__ == '__main__':
 
     PORT = int(os.environ.get('PORT', 5000))
 
+    ## database config
+    APP.config['MYSQL_HOST'] = 'localhost'
+    APP.config['MYSQL_USER'] = 'root'
+    APP.config['MYSQL_PASSWORD'] = 'll;kll;k'
+    APP.config['MYSQL_DB'] = 'DriveTech'
+ 
+    mysql = MySQL(APP)
+
     if ARGS.debug:
         print("Running in debug mode")
         CORS = CORS(APP)
         APP.run(host='0.0.0.0', port=PORT, debug=True)
     else:
         APP.run(host='0.0.0.0', port=PORT, debug=False)
+

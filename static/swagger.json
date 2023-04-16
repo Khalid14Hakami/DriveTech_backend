@@ -16,38 +16,38 @@
   ],
   "tags": [
     {
-      "name": "Book Request",
+      "name": "Storage Request",
       "description": "Example API for requesting and return book requests"
     }
   ],
   "paths": {
-    "/request": {
+    "/storage": {
       "get": {
         "tags": [
-          "Book Request"
+          "Storage Request"
         ],
-        "summary": "Returns bookRequests",
+        "summary": "Returns storages",
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/components/schemas/bookRequests"
+              "$ref": "#/components/schemas/storage"
             }
           }
         }
       },
       "post": {
         "tags": [
-          "Book Request"
+          "Storage Request"
         ],
-        "summary": "Create a new book request system",
+        "summary": "Create a new srorage",
         "requestBody": {
-          "description": "Book Request Post Object",
+          "description": "Storage Post Object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/bookRequestPostBody"
+                "$ref": "#/components/schemas/storage"
               }
             }
           }
@@ -60,6 +60,387 @@
             "description": "OK",
             "schema": {
               "$ref": "#/components/schemas/id"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
+    },
+    "/storage/{id}": {
+      "put": {
+        "summary": "edit a storage  by ID",
+        "tags": [
+          "Storage Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Srorage id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Storage Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/storage"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/storage"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      },
+      "delete": {
+        "summary": "delete a storage  by ID",
+        "tags": [
+          "Storage Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Srorage id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "requestBody": {},
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/storage"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
+    },
+    "/storage/{id}/vehicles": {
+      "get": {
+        "summary": "get storage vehicles by ID",
+        "tags": [
+          "Storage Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Srorage id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "requestBody": {},
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/vehicles"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
+    },
+    "/task": {
+      "get": {
+        "tags": [
+          "Task Request"
+        ],
+        "summary": "Returns Tasks",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/task"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Task Request"
+        ],
+        "summary": "Create a new task",
+        "requestBody": {
+          "description": "Task Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/task"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
+    },
+    "/task/{id}": {
+      "put": {
+        "summary": "edit a task by ID",
+        "tags": [
+          "Task Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Task id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Task Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/task"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/task"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      },
+      "delete": {
+        "summary": "delete a task by ID",
+        "tags": [
+          "Task Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Task id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "requestBody": {},
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/task"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
+    },
+    "/routine": {
+      "get": {
+        "tags": [
+          "Routine Request"
+        ],
+        "summary": "Returns routines",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/routines"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Routine Request"
+        ],
+        "summary": "Create a new routine",
+        "requestBody": {
+          "description": "Routien Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/routine_post"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
+    },
+    "/routine/{id}": {
+      "get": {
+        "tags": [
+          "Routine Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "routine id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "summary": "Returns routines",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/routines"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "edit a routine by ID",
+        "tags": [
+          "Routine Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "routine id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Task Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/routine"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/storage"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      },
+      "delete": {
+        "summary": "delete a routine by ID",
+        "tags": [
+          "Routine Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Task id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "requestBody": {},
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/routine"
             }
           },
           "400": {
@@ -186,10 +567,45 @@
   },
   "components": {
     "schemas": {
+      "storage": {
+        "properties": {
+          "strg_id": {
+            "type": "number",
+            "format": "–"
+          },
+          "location": {
+            "type": "string",
+            "format": "string"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "proponent": {
+            "type": "string",
+            "format": "string"
+          },
+          "contact": {
+            "type": "string",
+            "format": "string"
+          },
+          "capacity": {
+            "type": "number",
+            "format": "intger"
+          }
+        }
+      },
       "id": {
         "properties": {
-          "uuid": {
-            "type": "string"
+          "strg_id": {
+            "type": "number"
+          }
+        }
+      },
+      "task_id": {
+        "properties": {
+          "task_id": {
+            "type": "number"
           }
         }
       },
@@ -230,6 +646,124 @@
             "type": "object",
             "additionalProperties": {
               "$ref": "#/components/schemas/bookRequest"
+            }
+          }
+        }
+      },
+      "vehicles": {
+        "type": "array",
+        "properties": {
+          "vehicle": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/vehicle"
+            }
+          }
+        }
+      },
+      "vehicle": {
+        "type": "object",
+        "properties": {
+          "car_id": {
+            "type": "number",
+            "format": "number"
+          },
+          "VIN": {
+            "type": "number",
+            "format": "number"
+          },
+          "color": {
+            "type": "string",
+            "format": "string"
+          },
+          "arraival_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "task": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "number",
+            "format": "number"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "type": {
+            "type": "string",
+            "format": "string"
+          },
+          "frequency": {
+            "type": "number",
+            "format": "intger"
+          },
+          "num_of_attrib": {
+            "type": "number",
+            "format": "intger",
+            "example": 4
+          },
+          "attrib_names": {
+            "type": "object",
+            "example": {
+              "attrib_name_1": "Front-Right",
+              "attrib_name_2": "Front-Left",
+              "attrib_name_3": "Rear-Right",
+              "attrib_name_4": "Rear-Left"
+            }
+          }
+        }
+      },
+      "routine_post": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "model": {
+            "type": "string",
+            "format": "string"
+          },
+          "tasks": {
+            "type": "array",
+            "items" : {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "routine": {
+        "type": "object",
+        "properties": {
+          "rtn_id": {
+            "type": "number",
+            "format": "number"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "model": {
+            "type": "string",
+            "format": "string"
+          },
+          "tasks": {
+            "type": "array",
+            "$ref": "#/components/schemas/task"
+          }
+        }
+      },
+      "routines": {
+        "type": "array",
+        "properties": {
+          "routine": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/routine"
             }
           }
         }
