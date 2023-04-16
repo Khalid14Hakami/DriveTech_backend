@@ -13,7 +13,7 @@ curl -X GET http://127.0.0.1:5000/storage
 ```
 
 ## Swagger UI
-![swagger.png](swagger.png)
+![swagger.png](swagger2.png)
 
 Hosted Locally
 http://127.0.0.1:5000/swagger/
