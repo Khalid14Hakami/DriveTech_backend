@@ -7,7 +7,7 @@ from flask_mysqldb import MySQL
 
 
 
-from validate_email import validate_email
+# from validate_email import validate_email
 REQUEST_API = Blueprint('request_api', __name__)
 
 
@@ -16,126 +16,6 @@ def get_blueprint():
     """Return the blueprint for the main app module"""
     return REQUEST_API
 
-
-BOOK_REQUESTS = {
-    "8c36e86c-13b9-4102-a44f-646015dfd981": {
-        'title': u'Good Book',
-        'email': u'testuser1@test.com',
-        'timestamp': (datetime.today() - timedelta(1)).timestamp()
-    },
-    "04cfc704-acb2-40af-a8d3-4611fab54ada": {
-        'title': u'Bad Book',
-        'email': u'testuser2@test.com',
-        'timestamp': (datetime.today() - timedelta(2)).timestamp()
-    }
-}
-
-
-@REQUEST_API.route('/request', methods=['GET'])
-def get_records():
-    """Return all book requests
-    @return: 200: an array of all known BOOK_REQUESTS as a \
-    flask/response object with application/json mimetype.
-    """
-    c = g.mysql_db
-    c.execute("select * from car")
-    data = c.fetchall()
-    print("لا يشيخ")
-    c.close()
-    print(data)
-    return jsonify(data)
-
-
-@REQUEST_API.route('/request/<string:_id>', methods=['GET'])
-def get_record_by_id(_id):
-    """Get book request details by it's id
-    @param _id: the id
-    @return: 200: a BOOK_REQUESTS as a flask/response object \
-    with application/json mimetype.
-    @raise 404: if book request not found
-    """
-    if _id not in BOOK_REQUESTS:
-        abort(404)
-    return jsonify(BOOK_REQUESTS[_id])
-
-
-@REQUEST_API.route('/request', methods=['POST'])
-def create_record():
-    """Create a book request record
-    @param email: post : the requesters email address
-    @param title: post : the title of the book requested
-    @return: 201: a new_uuid as a flask/response object \
-    with application/json mimetype.
-    @raise 400: misunderstood request
-    """
-    if not request.get_json():
-        abort(400)
-    data = request.get_json(force=True)
-
-    if not data.get('email'):
-        abort(400)
-    if not validate_email(data['email']):
-        abort(400)
-    if not data.get('title'):
-        abort(400)
-
-    new_uuid = str(uuid.uuid4())
-    book_request = {
-        'title': data['title'],
-        'email': data['email'],
-        'timestamp': datetime.now().timestamp()
-    }
-    BOOK_REQUESTS[new_uuid] = book_request
-    # HTTP 201 Created
-    return jsonify({"id": new_uuid}), 201
-
-
-@REQUEST_API.route('/request/<string:_id>', methods=['PUT'])
-def edit_record(_id):
-    """Edit a book request record
-    @param email: post : the requesters email address
-    @param title: post : the title of the book requested
-    @return: 200: a booke_request as a flask/response object \
-    with application/json mimetype.
-    @raise 400: misunderstood request
-    """
-    if _id not in BOOK_REQUESTS:
-        abort(404)
-
-    if not request.get_json():
-        abort(400)
-    data = request.get_json(force=True)
-
-    if not data.get('email'):
-        abort(400)
-    if not validate_email(data['email']):
-        abort(400)
-    if not data.get('title'):
-        abort(400)
-
-    book_request = {
-        'title': data['title'],
-        'email': data['email'],
-        'timestamp': datetime.now().timestamp()
-    }
-
-    BOOK_REQUESTS[_id] = book_request
-    return jsonify(BOOK_REQUESTS[_id]), 200
-
-
-@REQUEST_API.route('/request/<string:_id>', methods=['DELETE'])
-def delete_record(_id):
-    """Delete a book request record
-    @param id: the id
-    @return: 204: an empty payload.
-    @raise 404: if book request not found
-    """
-    if _id not in BOOK_REQUESTS:
-        abort(404)
-
-    del BOOK_REQUESTS[_id]
-
-    return '', 204
 
 
 @REQUEST_API.route('/storage/', methods=['GET'])
@@ -228,7 +108,7 @@ def delete_storage(_id):
 @REQUEST_API.route('/storage/<string:_id>/vehicles', methods=['GET'])
 def storage_vehicles(_id):
     c = g.mysql_db.cursor()
-    q= """select c.car_id, c.VIN, c.color, c.arraival_date 
+    q= """select c.car_id, c.VIN, c.color, c.arraival_date, c.model
                     from CAR c, `STORED` s
                     where c.car_id = s.car_id 
                     and s.strg_id = {} """.format(_id)
@@ -367,6 +247,7 @@ def get_routine_id(_id):
 
     return jsonify(data)
 
+
 @REQUEST_API.route('/routine/<string:_id>', methods=['PUT'])
 def edit_routine(_id):
 
@@ -405,6 +286,62 @@ def delete_routine(_id):
     g.mysql_db.commit()
     c.close()
     return jsonify({"status": "OK"}), 200
+
+
+### _____ Job services: 
+
+## the service should look for all cars in a storage 
+## and find the latest tasks was done on each car 
+## and based on the task frequency.. the new job should be activated 
+# for example; if a car has no job log then all tasks are due today. 
+# if the job log was found and done today; then the new job 
+# should be due today+frequency 
+
+@REQUEST_API.route('/jobs/', methods=['GET'])
+def get_jobs():
+
+    c = g.mysql_db.cursor()
+    rtn_id = 4
+    _id = 13
+    q= """select c.car_id, c.VIN, c.color, c.arraival_date, c.model
+                    from CAR c, `STORED` s
+                    where c.car_id = s.car_id 
+                    and s.strg_id = {} """.format(_id)
+
+
+    cars = query_result_to_json(c, q)
+    for car in cars:
+        lst_car_log = None
+        q= """select * from task t, rtn_tsk rt 
+            where rt.rtn_id = {}
+            and t.task_id = rt.task_id ;""".format(rtn_id)
+        tasks = query_result_to_json(c, q)
+        for task in tasks:
+            q = """select * from CAR_LOG cl 
+                    where task_id = {}
+                    and car_id = {} 
+                    ORDER BY cl.task_date  DESC;""".format(task['task_id'], car['car_id'])
+            lst_car_log = query_result_to_json(c, q)
+
+            if len(lst_car_log) > 0:
+                lst_car_log = lst_car_log[0]
+                if  datetime.now() - lst_car_log['task_date'] > timedelta(days=10):
+                    due_date = lst_car_log['task_date']+timedelta(days=14)
+                    task['due_date'] = due_date
+                    if car.get('tasks') is not None:
+                        car['tasks'].append(task)
+                    else:
+                        car['tasks'] = [task]
+            else:
+                task['due_date'] = datetime.now()
+                if car.get('tasks') is not None:
+                    car['tasks'].append(task)
+                else:
+                    car['tasks'] = [task]
+    c.close()
+    return jsonify(cars)
+
+
 
 
 
