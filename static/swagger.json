@@ -461,6 +461,69 @@
           }
         }
       }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "User Request"
+        ],
+        "summary": "Returns users",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/routines"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User Request"
+        ],
+        "summary": "Create a new user",
+        "requestBody": {
+          "description": "User Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
+    },
+    "/login": {
+      "get": {
+        "tags": [
+          "Login Request"
+        ],
+        "summary": "Returns users",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/token"
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -587,7 +650,7 @@
           },
           "tasks": {
             "type": "array",
-            "items" : {
+            "items": {
               "type": "integer"
             }
           }
@@ -622,6 +685,32 @@
             "additionalProperties": {
               "$ref": "#/components/schemas/routine"
             }
+          }
+        }
+      },
+      "user": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "format": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      },
+      "token": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "format": "string"
           }
         }
       }

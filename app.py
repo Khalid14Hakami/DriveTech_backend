@@ -7,10 +7,14 @@ from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
 from routes import request_api
 from flask_mysqldb import MySQL
+from passlib.apps import custom_app_context as pwd_context
+
 
 
 
 APP = Flask(__name__)
+
+
 
 ### swagger specific ###
 SWAGGER_URL = '/swagger'
@@ -54,7 +58,7 @@ def handle_500_error(_error):
     """Return a http 500 error to client"""
     return make_response(jsonify({'error': 'Server error'}), 500)
 
-
+    
 def connect_db():
     """Connects to the specific database."""
     #Creating a connection cursor
@@ -107,6 +111,7 @@ if __name__ == '__main__':
     APP.config['MYSQL_USER'] = 'root'
     APP.config['MYSQL_PASSWORD'] = 'll;kll;k'
     APP.config['MYSQL_DB'] = 'DriveTech'
+    APP.config['SECRET_KEY'] = 'SECRET_KEY'
  
     mysql = MySQL(APP)
 

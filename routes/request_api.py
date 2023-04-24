@@ -2,14 +2,18 @@
 import json
 import uuid
 from datetime import datetime, timedelta
-from flask import jsonify, abort, request, Blueprint, g
+from flask import jsonify, abort, request, Blueprint, g, current_app
 from flask_mysqldb import MySQL
+from passlib.apps import custom_app_context as pwd_context
+from flask_httpauth import HTTPBasicAuth
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
 
 
 
 # from validate_email import validate_email
 REQUEST_API = Blueprint('request_api', __name__)
-
+auth = HTTPBasicAuth()
 
 
 def get_blueprint():
@@ -341,7 +345,74 @@ def get_jobs():
     c.close()
     return jsonify(cars)
 
+## user service: 
 
+@REQUEST_API.route('/user', methods = ['POST'])
+def new_user():
+    if not request.get_json():
+        abort(400)
+    data = request.get_json(force=True)
+
+    username = data.get('username')
+    password = data.get('password')
+    email = data.get('email')
+    print(len(hash_password(password)))
+    print(hash_password(password))
+
+    if username is None or password is None or email is None:
+        abort(400) # missing arguments
+    c = g.mysql_db.cursor()
+
+    q_user_exist = """select * from USER
+                        where username = '{}';""".format(username)
+    user = query_result_to_json(c, q_user_exist, one=True)
+
+    if user is not None:
+        abort(400) # existing user
+        
+    user = {"username": username, 
+            "email": email,
+            "password": hash_password(password)}
+    user = insert_db(c, user, "USER")
+    g.mysql_db.commit()
+    c.close()
+    return jsonify(user)
+
+@REQUEST_API.route('/login', methods = ['GET'])
+@auth.login_required
+def get_auth_token():
+    return jsonify({ 'token': g.user[1].decode('ascii') })
+
+
+@auth.verify_password
+def verify_password(username_or_token, password):
+    # first try to authenticate by token
+    user = verify_auth_token(username_or_token)
+    if not user:
+        # try to authenticate with username/password
+        print("check user")
+        user = "test" ##User.query.filter_by(username = username_or_token).first()
+        if not user or not pwd_context.verify(password, pwd_context.encrypt("1234")):
+            return False
+    token = generate_auth_token(username_or_token)
+    g.user = (user, token)
+    return True
+
+def generate_auth_token(username, expiration = 600):
+    s = Serializer(current_app.config['SECRET_KEY'], expires_in = expiration)
+    return s.dumps({ 'id': username })
+
+@staticmethod
+def verify_auth_token(token):
+    s = Serializer(current_app.config['SECRET_KEY'])
+    try:
+        data = s.loads(token)
+    except SignatureExpired:
+        return None # valid token, but expired
+    except BadSignature:
+        return None # invalid token
+    user = None #"user" #User.query.get(data['id'])
+    return user
 
 
 
@@ -379,3 +450,11 @@ def delete_db(c, table, cond):
     print(sql)
     # valid in Python 3
     c.execute(sql)
+
+
+def hash_password(password):
+    return pwd_context.encrypt(password)
+
+def verify_password(password, password_hash):
+    return pwd_context.verify(password, password_hash)
+
