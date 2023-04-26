@@ -20,7 +20,7 @@ CREATE TABLE `ROUTINE` (
   `model` varchar(45) NOT NULL,
   PRIMARY KEY (`rtn_id`),
   UNIQUE KEY `rtn_id_UNIQUE` (`rtn_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- DriveTech.STORAGE definition
@@ -34,7 +34,7 @@ CREATE TABLE `STORAGE` (
   `capacity` decimal(10,0) NOT NULL,
   PRIMARY KEY (`strg_id`),
   UNIQUE KEY `strg_id_UNIQUE` (`strg_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- DriveTech.TASK definition
@@ -48,41 +48,7 @@ CREATE TABLE `TASK` (
   `attrib_names` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `req_image` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`task_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
--- DriveTech.`USER` definition
-
-CREATE TABLE `USER` (
-  `user_id` int NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `email` varchar(45) NOT NULL,
-  `password` varchar(45) NOT NULL,
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `user_id_UNIQUE` (`user_id`),
-  UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
--- DriveTech.CAR_LOG definition
-
-CREATE TABLE `CAR_LOG` (
-  `log_id` int NOT NULL,
-  `car_id` int NOT NULL,
-  `task_id` int NOT NULL,
-  `task_value` varchar(45) NOT NULL,
-  `rtn_id` int DEFAULT NULL,
-  `task_date` datetime NOT NULL,
-  `notes` varchar(45) DEFAULT NULL,
-  `user` int NOT NULL,
-  PRIMARY KEY (`log_id`),
-  KEY `usr_id_idx` (`user`),
-  KEY `car_id_idx` (`car_id`),
-  KEY `log_task_id_fk_idx` (`task_id`),
-  KEY `log_rtn_id_fk_idx` (`rtn_id`),
-  CONSTRAINT `log_car_id_fk` FOREIGN KEY (`car_id`) REFERENCES `CAR` (`car_id`),
-  CONSTRAINT `log_usr_id_fk` FOREIGN KEY (`user`) REFERENCES `USER` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- DriveTech.rtn_tsk definition
@@ -106,4 +72,42 @@ CREATE TABLE `STORED` (
   KEY `storage_id_idx` (`strg_id`),
   CONSTRAINT `STORED_FK` FOREIGN KEY (`car_id`) REFERENCES `CAR` (`car_id`),
   CONSTRAINT `STORED_FK_1` FOREIGN KEY (`strg_id`) REFERENCES `STORAGE` (`strg_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- DriveTech.`USER` definition
+
+CREATE TABLE `USER` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `email` varchar(45) NOT NULL,
+  `password` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `strg_id` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `user_id_UNIQUE` (`user_id`),
+  UNIQUE KEY `email_UNIQUE` (`email`),
+  KEY `USER_FK` (`strg_id`),
+  CONSTRAINT `USER_FK` FOREIGN KEY (`strg_id`) REFERENCES `STORAGE` (`strg_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- DriveTech.CAR_LOG definition
+
+CREATE TABLE `CAR_LOG` (
+  `log_id` int NOT NULL,
+  `car_id` int NOT NULL,
+  `task_id` int NOT NULL,
+  `task_value` varchar(45) NOT NULL,
+  `rtn_id` int DEFAULT NULL,
+  `task_date` datetime NOT NULL,
+  `notes` varchar(45) DEFAULT NULL,
+  `user_id` int NOT NULL,
+  PRIMARY KEY (`log_id`),
+  KEY `usr_id_idx` (`user_id`),
+  KEY `car_id_idx` (`car_id`),
+  KEY `log_task_id_fk_idx` (`task_id`),
+  KEY `log_rtn_id_fk_idx` (`rtn_id`),
+  CONSTRAINT `CAR_LOG_FK` FOREIGN KEY (`car_id`) REFERENCES `CAR` (`car_id`),
+  CONSTRAINT `CAR_LOG_FK_1` FOREIGN KEY (`user_id`) REFERENCES `USER` (`user_id`),
+  CONSTRAINT `CAR_LOG_FK_2` FOREIGN KEY (`task_id`) REFERENCES `TASK` (`task_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
