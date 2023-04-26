@@ -32,7 +32,7 @@ def get_storage():
     
     c = g.mysql_db.cursor()
     # c.execute("select * from storage")
-    data = query_result_to_json(c, "select * from storage")
+    data = query_result_to_json(c, "select * from STORAGE")
     c.close()
     print(data)
     return jsonify(data)
@@ -328,7 +328,7 @@ def get_jobs():
 
     for car in cars:
         lst_car_log = None
-        q= """select * from task t, rtn_tsk rt 
+        q= """select * from TASK t, rtn_tsk rt 
             where rt.rtn_id = {}
             and t.task_id = rt.task_id ;""".format(rtn_id)
         tasks = query_result_to_json(c, q)
