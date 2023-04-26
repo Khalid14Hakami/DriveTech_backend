@@ -52,7 +52,7 @@ def create_storage():
     if not request.get_json():
         abort(400)
     data = request.get_json(force=True)
-    table = 'storage'
+    table = 'STORAGE'
     del data['strg_id']
     c = g.mysql_db.cursor()
     try:
@@ -79,7 +79,7 @@ def edit_storage(_id):
         print('deleting strg_id')
         data.pop('strg_id')
 
-    table = 'storage'
+    table = 'STORAGE'
  
     c = g.mysql_db.cursor()
     try:
@@ -96,7 +96,7 @@ def edit_storage(_id):
 @auth.login_required
 def delete_storage(_id):
 
-    table = 'storage'
+    table = 'STORAGE'
  
     c = g.mysql_db.cursor()
     try:
@@ -169,7 +169,7 @@ def edit_task(_id):
     if data.get('task_id') is not None:
         print('deleting strg_id')
         data.pop('task_id')
-    table = 'task'
+    table = 'TASK'
  
     c = g.mysql_db.cursor()
     try:
@@ -186,7 +186,7 @@ def edit_task(_id):
 @auth.login_required
 def delete_task(_id):
 
-    table = 'task'
+    table = 'TASK'
  
     c = g.mysql_db.cursor()
     try:
@@ -271,7 +271,7 @@ def edit_routine(_id):
 
     if data.get('rtn_id') is not None:
         data.pop('rtn_id')
-    table = 'routine'
+    table = 'ROUTINE'
  
     c = g.mysql_db.cursor()
     try:
@@ -287,7 +287,7 @@ def edit_routine(_id):
 @REQUEST_API.route('/routine/<string:_id>', methods=['DELETE'])
 def delete_routine(_id):
 
-    table = 'routine'
+    table = 'ROUTINE'
  
     c = g.mysql_db.cursor()
     try:
