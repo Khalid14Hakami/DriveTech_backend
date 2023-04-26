@@ -107,10 +107,10 @@ if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 5000))
 
     ## database config
-    APP.config['MYSQL_HOST'] = 'localhost'
-    APP.config['MYSQL_USER'] = 'root'
-    APP.config['MYSQL_PASSWORD'] = 'll;kll;k'
-    APP.config['MYSQL_DB'] = 'DriveTech'
+    APP.config['MYSQL_HOST'] = 'k14h.mysql.pythonanywhere-services.com'
+    APP.config['MYSQL_USER'] = 'k14h'
+    APP.config['MYSQL_PASSWORD'] = 'DBSTRONGESTPASS'
+    APP.config['MYSQL_DB'] = 'k14h$DriveTech'
     APP.config['SECRET_KEY'] = 'SECRET_KEY'
  
     mysql = MySQL(APP)
