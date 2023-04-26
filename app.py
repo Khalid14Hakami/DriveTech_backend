@@ -109,7 +109,7 @@ if __name__ == '__main__':
     ## database config
     APP.config['MYSQL_HOST'] = 'k14h.mysql.pythonanywhere-services.com'
     APP.config['MYSQL_USER'] = 'k14h'
-    APP.config['MYSQL_PASSWORD'] = 'DBSTRONGESTPASS'
+    APP.config['MYSQL_PASSWORD'] = 'DataBaseStrongPassword'
     APP.config['MYSQL_DB'] = 'k14h$DriveTech'
     APP.config['SECRET_KEY'] = 'SECRET_KEY'
  
