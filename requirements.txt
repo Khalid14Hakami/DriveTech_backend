@@ -1,5 +1,4 @@
-﻿Flask==1.0.2
-Werkzeug==2.2.3
+﻿Werkzeug==2.2.3
 flask_cors==3.0.9 
 gunicorn==19.9.0
 validate_email==1.3
@@ -7,7 +6,7 @@ nose==1.3.7
 requests==2.21.0
 argparse==1.4.0
 uuid==1.30
-flask-swagger-ui==3.20.9certifi @ file:///Users/ec2-user/ci_py311/certifi_1678321191472/work/certifi
+flask-swagger-ui==3.20.9
 chardet==3.0.4
 click==8.1.3
 Flask==2.2.3
