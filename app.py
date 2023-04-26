@@ -112,7 +112,7 @@ if __name__ == '__main__':
     APP.config['MYSQL_PASSWORD'] = 'DataBaseStrongPassword'
     APP.config['MYSQL_DB'] = 'k14h$DriveTech'
     APP.config['SECRET_KEY'] = 'SECRET_KEY'
- 
+    print('defining MYSQL _______ +++++++++++++++++++++ !!!!!!!!!!!!!!!!!!!!!!!!***********!!!!')
     mysql = MySQL(APP)
 
     if ARGS.debug:
