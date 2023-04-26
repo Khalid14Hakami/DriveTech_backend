@@ -21,8 +21,8 @@ def get_blueprint():
     return REQUEST_API
 
 
-
 @REQUEST_API.route('/storage/', methods=['GET'])
+@auth.login_required
 def get_storage():
     """Get all storages information
     @param none
@@ -40,6 +40,7 @@ def get_storage():
     return '', 204
 
 @REQUEST_API.route('/storage', methods=['POST'])
+@auth.login_required
 def create_storage():
     """Create a Storage record
     @param email: post : the requesters email address
@@ -65,10 +66,8 @@ def create_storage():
     return jsonify({'strg_id': id})
 
 
-
-
-
 @REQUEST_API.route('/storage/<string:_id>', methods=['PUT'])
+@auth.login_required
 def edit_storage(_id):
 
 
@@ -94,6 +93,7 @@ def edit_storage(_id):
     return jsonify(data)
 
 @REQUEST_API.route('/storage/<string:_id>', methods=['DELETE'])
+@auth.login_required
 def delete_storage(_id):
 
     table = 'storage'
@@ -110,6 +110,7 @@ def delete_storage(_id):
     return jsonify({"status": "OK"}), 200
 
 @REQUEST_API.route('/storage/<string:_id>/vehicles', methods=['GET'])
+@auth.login_required
 def storage_vehicles(_id):
     c = g.mysql_db.cursor()
     q= """select c.car_id, c.VIN, c.color, c.arraival_date, c.model
@@ -124,6 +125,7 @@ def storage_vehicles(_id):
 
 
 @REQUEST_API.route('/task/', methods=['POST'])
+@auth.login_required
 def create_tasks():
     if not request.get_json():
         abort(400)
@@ -144,6 +146,7 @@ def create_tasks():
     return jsonify({'task_id': id})
 
 @REQUEST_API.route('/task/', methods=['GET'])
+@auth.login_required
 def get_task():
 
     c = g.mysql_db.cursor()
@@ -155,6 +158,7 @@ def get_task():
     return jsonify(data)
 
 @REQUEST_API.route('/task/<string:_id>', methods=['PUT'])
+@auth.login_required
 def edit_task(_id):
 
 
@@ -179,6 +183,7 @@ def edit_task(_id):
     return jsonify(data)
 
 @REQUEST_API.route('/task/<string:_id>', methods=['DELETE'])
+@auth.login_required
 def delete_task(_id):
 
     table = 'task'
@@ -199,6 +204,7 @@ def delete_task(_id):
 
 
 @REQUEST_API.route('/routine/', methods=['POST'])
+@auth.login_required
 def create_routine():
     if not request.get_json():
         abort(400)
@@ -221,6 +227,7 @@ def create_routine():
     return jsonify({'rtn_id': id})
 
 @REQUEST_API.route('/routine/', methods=['GET'])
+@auth.login_required
 def get_routine():
 
     c = g.mysql_db.cursor()
@@ -232,6 +239,7 @@ def get_routine():
     return jsonify(data)
 
 @REQUEST_API.route('/routine/<string:_id>', methods=['GET'])
+@auth.login_required
 def get_routine_id(_id):
 
     c = g.mysql_db.cursor()
@@ -253,6 +261,7 @@ def get_routine_id(_id):
 
 
 @REQUEST_API.route('/routine/<string:_id>', methods=['PUT'])
+@auth.login_required
 def edit_routine(_id):
 
 
@@ -302,11 +311,12 @@ def delete_routine(_id):
 # should be due today+frequency 
 
 @REQUEST_API.route('/jobs/', methods=['GET'])
+@auth.login_required
 def get_jobs():
-
     c = g.mysql_db.cursor()
+
     rtn_id = 4
-    _id = 13
+    _id = g.user[0]['strg_id'] ## user = (user, token)
     q= """select c.car_id, c.VIN, c.color, c.arraival_date, c.model
                     from CAR c, `STORED` s
                     where c.car_id = s.car_id 
@@ -314,6 +324,8 @@ def get_jobs():
 
 
     cars = query_result_to_json(c, q)
+    print('getting user cars')
+
     for car in cars:
         lst_car_log = None
         q= """select * from task t, rtn_tsk rt 
@@ -345,9 +357,15 @@ def get_jobs():
     c.close()
     return jsonify(cars)
 
+## job log service: 
+"""
+here the uesr can check in a car or log it in 
+"""
+
 ## user service: 
 
 @REQUEST_API.route('/user', methods = ['POST'])
+@auth.login_required
 def new_user():
     if not request.get_json():
         abort(400)
@@ -356,23 +374,22 @@ def new_user():
     username = data.get('username')
     password = data.get('password')
     email = data.get('email')
+    strg_id = data.get('strg_id')
     print(len(hash_password(password)))
     print(hash_password(password))
 
     if username is None or password is None or email is None:
         abort(400) # missing arguments
     c = g.mysql_db.cursor()
-
-    q_user_exist = """select * from USER
-                        where username = '{}';""".format(username)
-    user = query_result_to_json(c, q_user_exist, one=True)
-
+    
+    user = get_user(c, username)
     if user is not None:
         abort(400) # existing user
         
     user = {"username": username, 
             "email": email,
-            "password": hash_password(password)}
+            "password": hash_password(password),
+            "strg_id": strg_id}
     user = insert_db(c, user, "USER")
     g.mysql_db.commit()
     c.close()
@@ -387,12 +404,15 @@ def get_auth_token():
 @auth.verify_password
 def verify_password(username_or_token, password):
     # first try to authenticate by token
+    c = g.mysql_db.cursor()
     user = verify_auth_token(username_or_token)
     if not user:
         # try to authenticate with username/password
-        print("check user")
-        user = "test" ##User.query.filter_by(username = username_or_token).first()
-        if not user or not pwd_context.verify(password, pwd_context.encrypt("1234")):
+        user = get_user(c, username_or_token)
+        print(user)
+        print(pwd_context.encrypt(password))
+        if not user or not pwd_context.verify(password, user['password']):
+            print('user not found')
             return False
     token = generate_auth_token(username_or_token)
     g.user = (user, token)
@@ -416,6 +436,17 @@ def verify_auth_token(token):
 
 
 
+def check_password():
+    pass
+
+def get_user(c, username):
+
+    q_user_exist = """select * from USER
+                        where username = '{}';""".format(username) 
+
+    user = query_result_to_json(c, q_user_exist, one=True)
+    return user
+    
 ### _____-------------------_____
 
 def query_result_to_json(cur, query, args=(), one=False):

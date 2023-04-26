@@ -702,6 +702,10 @@
           "password": {
             "type": "string",
             "format": "string"
+          },
+          "strg_id": {
+            "type": "number",
+            "format": "intger"
           }
         }
       },
