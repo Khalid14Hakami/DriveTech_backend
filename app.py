@@ -14,7 +14,14 @@ from passlib.apps import custom_app_context as pwd_context
 
 APP = Flask(__name__)
 
-
+## database config
+APP.config['MYSQL_HOST'] = 'k14h.mysql.pythonanywhere-services.com'
+APP.config['MYSQL_USER'] = 'k14h'
+APP.config['MYSQL_PASSWORD'] = 'DataBaseStrongPassword'
+APP.config['MYSQL_DB'] = 'k14h$DriveTech'
+APP.config['SECRET_KEY'] = 'SECRET_KEY'
+print('defining MYSQL _______ +++++++++++++++++++++ !!!!!!!!!!!!!!!!!!!!!!!!***********!!!!')
+mysql = MySQL(APP)
 
 ### swagger specific ###
 SWAGGER_URL = '/swagger'
@@ -106,14 +113,7 @@ if __name__ == '__main__':
 
     PORT = int(os.environ.get('PORT', 5000))
 
-    ## database config
-    APP.config['MYSQL_HOST'] = 'k14h.mysql.pythonanywhere-services.com'
-    APP.config['MYSQL_USER'] = 'k14h'
-    APP.config['MYSQL_PASSWORD'] = 'DataBaseStrongPassword'
-    APP.config['MYSQL_DB'] = 'k14h$DriveTech'
-    APP.config['SECRET_KEY'] = 'SECRET_KEY'
-    print('defining MYSQL _______ +++++++++++++++++++++ !!!!!!!!!!!!!!!!!!!!!!!!***********!!!!')
-    mysql = MySQL(APP)
+
 
     if ARGS.debug:
         print("Running in debug mode")
