@@ -33,6 +33,9 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
         'app_name': "Seans-Python-Flask-REST-Boilerplate"
     }
 )
+
+CORS = CORS(APP)
+
 APP.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 ### end swagger specific ###
 
