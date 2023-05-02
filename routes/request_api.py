@@ -365,7 +365,7 @@ here the uesr can check in a car or log it in
 ## user service: 
 @REQUEST_API.route('/user/', methods=['GET'])
 @auth.login_required
-def get_routine():
+def get_users():
 
     c = g.mysql_db.cursor()
     q= "select * from USER" 
