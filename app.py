@@ -16,7 +16,7 @@ APP = Flask(__name__)
 
 ## database config
 
-if False:
+if True:
 
     APP.config['MYSQL_HOST'] = 'k14h.mysql.pythonanywhere-services.com'
     APP.config['MYSQL_USER'] = 'k14h'
