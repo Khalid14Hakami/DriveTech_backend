@@ -15,12 +15,20 @@ from passlib.apps import custom_app_context as pwd_context
 APP = Flask(__name__)
 
 ## database config
-APP.config['MYSQL_HOST'] = 'k14h.mysql.pythonanywhere-services.com'
-APP.config['MYSQL_USER'] = 'k14h'
-APP.config['MYSQL_PASSWORD'] = 'DataBaseStrongPassword'
-APP.config['MYSQL_DB'] = 'k14h$DriveTech'
-APP.config['SECRET_KEY'] = 'SECRET_KEY'
-print('defining MYSQL _______ +++++++++++++++++++++ !!!!!!!!!!!!!!!!!!!!!!!!***********!!!!')
+
+if False:
+
+    APP.config['MYSQL_HOST'] = 'k14h.mysql.pythonanywhere-services.com'
+    APP.config['MYSQL_USER'] = 'k14h'
+    APP.config['MYSQL_PASSWORD'] = 'DataBaseStrongPassword'
+    APP.config['MYSQL_DB'] = 'k14h$DriveTech'
+    APP.config['SECRET_KEY'] = 'SECRET_KEY'
+    print('defining MYSQL _______ +++++++++++++++++++++ !!!!!!!!!!!!!!!!!!!!!!!!***********!!!!')
+else:
+    APP.config['MYSQL_USER'] = 'root'
+    APP.config['MYSQL_PASSWORD'] = 'll;kll;k'
+    APP.config['MYSQL_DB'] = 'DriveTech'
+    APP.config['SECRET_KEY'] = 'SECRET_KEY'
 mysql = MySQL(APP)
 
 ### swagger specific ###
@@ -121,7 +129,7 @@ if __name__ == '__main__':
     if ARGS.debug:
         print("Running in debug mode")
         CORS = CORS(APP)
-        # APP.run(host='0.0.0.0', port=PORT, debug=True)
+        APP.run(host='0.0.0.0', port=PORT, debug=True)
     else:
-        # APP.run(host='0.0.0.0', port=PORT, debug=False)
+        APP.run(host='0.0.0.0', port=PORT, debug=False)
         pass

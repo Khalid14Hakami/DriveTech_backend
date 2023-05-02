@@ -231,7 +231,7 @@ def create_routine():
 def get_routine():
 
     c = g.mysql_db.cursor()
-    q= "select * from routine" 
+    q= "select * from ROUTINE" 
 
     data = query_result_to_json(c, q)
     c.close()
@@ -243,12 +243,12 @@ def get_routine():
 def get_routine_id(_id):
 
     c = g.mysql_db.cursor()
-    q= "select * from routine where rtn_id={}".format(_id)
+    q= "select * from ROUTINE where rtn_id={}".format(_id)
 
     data = query_result_to_json(c, q)
     data = data[0]
     print(data)
-    q= """select * from task t, rtn_tsk rt 
+    q= """select * from TASK t, rtn_tsk rt 
             where rt.rtn_id = {}
             and t.task_id = rt.task_id ;""".format(_id)
     tasks = query_result_to_json(c, q)
