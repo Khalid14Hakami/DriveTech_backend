@@ -363,6 +363,17 @@ here the uesr can check in a car or log it in
 """
 
 ## user service: 
+@REQUEST_API.route('/user/', methods=['GET'])
+@auth.login_required
+def get_routine():
+
+    c = g.mysql_db.cursor()
+    q= "select * from USER" 
+
+    data = query_result_to_json(c, q)
+    c.close()
+
+    return jsonify(data)
 
 @REQUEST_API.route('/user', methods = ['POST'])
 @auth.login_required
