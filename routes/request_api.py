@@ -37,7 +37,15 @@ def get_storage():
     print(data)
     return jsonify(data)
 
-    return '', 204
+@REQUEST_API.route('/storage/<string:_id>', methods=['GET'])
+@auth.login_required
+def get_storage_byID(_id):
+    
+    c = g.mysql_db.cursor()
+    data = query_result_to_json(c, "select * from STORAGE where strg_id = {}".format(_id), one=True)
+    c.close()
+    print(data)
+    return jsonify(data)
 
 @REQUEST_API.route('/storage', methods=['POST'])
 @auth.login_required
@@ -53,7 +61,8 @@ def create_storage():
         abort(400)
     data = request.get_json(force=True)
     table = 'STORAGE'
-    del data['strg_id']
+    if data.get('strg_id') is not None:
+        data.pop('strg_id')    
     c = g.mysql_db.cursor()
     try:
        id = insert_db(c, data, table)
@@ -124,7 +133,7 @@ def storage_vehicles(_id):
     return jsonify(data)
 
 
-@REQUEST_API.route('/task/', methods=['POST'])
+@REQUEST_API.route('/task', methods=['POST'])
 @auth.login_required
 def create_tasks():
     if not request.get_json():
@@ -132,8 +141,8 @@ def create_tasks():
     data = request.get_json(force=True)
     data
     table = 'TASK'
-    del data['task_id']
-
+    if data.get('task_id') is not None:
+        data.pop('task_id')
     c = g.mysql_db.cursor()
     try:
        id = insert_db(c, data, table)
@@ -145,7 +154,7 @@ def create_tasks():
     c.close()
     return jsonify({'task_id': id})
 
-@REQUEST_API.route('/task/', methods=['GET'])
+@REQUEST_API.route('/task', methods=['GET'])
 @auth.login_required
 def get_task():
 
@@ -203,7 +212,7 @@ def delete_task(_id):
 ### --- ROUTINE:
 
 
-@REQUEST_API.route('/routine/', methods=['POST'])
+@REQUEST_API.route('/routine', methods=['POST'])
 @auth.login_required
 def create_routine():
     if not request.get_json():
@@ -212,6 +221,7 @@ def create_routine():
     tasks = data.get('tasks')
     table = 'ROUTINE'
     del data['tasks']
+
 
     c = g.mysql_db.cursor()
     try:
@@ -226,7 +236,7 @@ def create_routine():
     c.close()
     return jsonify({'rtn_id': id})
 
-@REQUEST_API.route('/routine/', methods=['GET'])
+@REQUEST_API.route('/routine', methods=['GET'])
 @auth.login_required
 def get_routine():
 
@@ -314,8 +324,9 @@ def delete_routine(_id):
 @auth.login_required
 def get_jobs():
     c = g.mysql_db.cursor()
-
-    rtn_id = 4
+    rtn_q = "select rtn_id from `ROUTINE` r where r.model = 'GM_ALL' "
+    rtn_id = query_result_to_json(c, rtn_q, one=True)['rtn_id']
+   
     _id = g.user[0]['strg_id'] ## user = (user, token)
     q= """select c.car_id, c.VIN, c.color, c.arraival_date, c.model
                     from CAR c, `STORED` s
@@ -362,8 +373,30 @@ def get_jobs():
 here the uesr can check in a car or log it in 
 """
 
+
+@REQUEST_API.route('/job', methods=['POST'])
+@auth.login_required
+def log_job():
+    
+    if not request.get_json():
+        abort(400)
+    data = request.get_json(force=True)
+    table = 'CAR_LOG'
+    if data.get('strg_id') is not None:
+        data.pop('strg_id')
+    c = g.mysql_db.cursor()
+    try:
+       id = insert_db(c, data, table)
+    except (g.mysql_db.Error, g.mysql_db.Warning) as e:
+        print(e)
+        return jsonify({"status": "Error", "message": str(e)}), 500
+
+    g.mysql_db.commit()
+    c.close()
+    return jsonify({'strg_id': id})
+
 ## user service: 
-@REQUEST_API.route('/user/', methods=['GET'])
+@REQUEST_API.route('/user', methods=['GET'])
 @auth.login_required
 def get_users():
 
@@ -386,9 +419,6 @@ def new_user():
     password = data.get('password')
     email = data.get('email')
     strg_id = data.get('strg_id')
-    print(len(hash_password(password)))
-    print(hash_password(password))
-
     if username is None or password is None or email is None:
         abort(400) # missing arguments
     c = g.mysql_db.cursor()
@@ -406,6 +436,59 @@ def new_user():
     c.close()
     return jsonify(user)
 
+
+@REQUEST_API.route('/user/<string:_id>', methods=['PUT'])
+@auth.login_required
+def edit_user(_id):
+
+    if not request.get_json():
+        abort(400)
+    data = request.get_json(force=True)
+    username = data.get('username')
+    password = data.get('password')
+    email = data.get('email')
+    strg_id = data.get('strg_id')
+
+    if username is None or password is None or email is None:
+        abort(400) # missing arguments
+
+    if data.get('user_id') is not None:
+        data.pop('user_id')
+    user = {"username": username, 
+            "email": email,
+            "password": hash_password(password),
+            "strg_id": strg_id}
+    table = 'USER'
+ 
+    c = g.mysql_db.cursor()
+    try:
+       update_db(c, user, table, "user_id={}".format(_id))
+    except (g.mysql_db.Error, g.mysql_db.Warning) as e:
+        print(e)
+        return jsonify({"status": "Error", "message": str(e)}), 500
+
+    g.mysql_db.commit()
+    c.close()
+    return jsonify({'message': 'ok'})
+
+
+@REQUEST_API.route('/user/<string:_id>', methods=['DELETE'])
+def delete_user(_id):
+
+    table = 'USER'
+ 
+    c = g.mysql_db.cursor()
+    try:
+       delete_db(c, table, "user_id={}".format(_id))
+    except (g.mysql_db.Error, g.mysql_db.Warning) as e:
+        print(e)
+        return jsonify({"status": "Error", "message": str(e)}), 500
+
+    g.mysql_db.commit()
+    c.close()
+    return jsonify({"status": "OK"}), 200
+
+
 @REQUEST_API.route('/login', methods = ['GET'])
 @auth.login_required
 def get_auth_token():
@@ -420,13 +503,13 @@ def verify_password(username_or_token, password):
     if not user:
         # try to authenticate with username/password
         user = get_user(c, username_or_token)
-        print(user)
-        print(pwd_context.encrypt(password))
         if not user or not pwd_context.verify(password, user['password']):
             print('user not found')
             return False
     token = generate_auth_token(username_or_token)
     g.user = (user, token)
+    print(user['username'])
+
     return True
 
 def generate_auth_token(username, expiration = 600):

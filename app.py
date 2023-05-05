@@ -13,10 +13,11 @@ from passlib.apps import custom_app_context as pwd_context
 
 
 APP = Flask(__name__)
+CORS = CORS(APP)
 
 ## database config
 
-if True:
+if False:
 
     APP.config['MYSQL_HOST'] = 'k14h.mysql.pythonanywhere-services.com'
     APP.config['MYSQL_USER'] = 'k14h'
@@ -38,11 +39,10 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
     config={
-        'app_name': "Seans-Python-Flask-REST-Boilerplate"
+        'app_name': "DriveTech_API"
     }
 )
 
-CORS = CORS(APP)
 
 APP.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 ### end swagger specific ###

@@ -69,6 +69,37 @@
       }
     },
     "/storage/{id}": {
+      "get": {
+        "summary": "get a storage by ID",
+        "tags": [
+          "Storage Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Srorage id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/storage"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      },
       "put": {
         "summary": "edit a storage  by ID",
         "tags": [
@@ -509,6 +540,82 @@
         }
       }
     },
+    "/user/{id}":{
+      "put": {
+        "tags": [
+          "User Request"
+        ],
+        "summary": "update a new user by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Srorage id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "User Put Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      },
+      "delete": {
+        "summary": "delete a user  by ID",
+        "tags": [
+          "User Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "User id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "requestBody": {},
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/user"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
+    },
     "/login": {
       "get": {
         "tags": [
@@ -634,6 +741,10 @@
               "attrib_name_3": "Rear-Right",
               "attrib_name_4": "Rear-Left"
             }
+          },
+          "req_image": {
+            "type": "boolean",
+            "example": true
           }
         }
       },
@@ -706,6 +817,10 @@
           "strg_id": {
             "type": "number",
             "format": "intger"
+          },
+          "role": {
+            "type": "string",
+            "format": "string"
           }
         }
       },
