@@ -21,7 +21,7 @@ def get_blueprint():
     return REQUEST_API
 
 
-@REQUEST_API.route('/storage/', methods=['GET'])
+@REQUEST_API.route('/storage', methods=['GET'])
 @auth.login_required
 def get_storage():
     """Get all storages information
@@ -122,7 +122,7 @@ def delete_storage(_id):
 @auth.login_required
 def storage_vehicles(_id):
     c = g.mysql_db.cursor()
-    q= """select c.car_id, c.VIN, c.color, c.arraival_date, c.model
+    q= """select c.car_id, c.VIN, c.color, c.arrival_date, c.model
                     from CAR c, `STORED` s
                     where c.car_id = s.car_id 
                     and s.strg_id = {} """.format(_id)
@@ -320,7 +320,7 @@ def delete_routine(_id):
 # if the job log was found and done today; then the new job 
 # should be due today+frequency 
 
-@REQUEST_API.route('/jobs/', methods=['GET'])
+@REQUEST_API.route('/jobs', methods=['GET'])
 @auth.login_required
 def get_jobs():
     c = g.mysql_db.cursor()
@@ -328,7 +328,7 @@ def get_jobs():
     rtn_id = query_result_to_json(c, rtn_q, one=True)['rtn_id']
    
     _id = g.user[0]['strg_id'] ## user = (user, token)
-    q= """select c.car_id, c.VIN, c.color, c.arraival_date, c.model
+    q= """select c.car_id, c.VIN, c.color, c.arrival_date, c.model
                     from CAR c, `STORED` s
                     where c.car_id = s.car_id 
                     and s.strg_id = {} """.format(_id)
@@ -372,28 +372,74 @@ def get_jobs():
 """
 here the uesr can check in a car or log it in 
 """
-
-
-@REQUEST_API.route('/job', methods=['POST'])
+@REQUEST_API.route('/check-in', methods=['POST'])
 @auth.login_required
-def log_job():
-    
+def car_check_in():
+    c = g.mysql_db.cursor()
+
+    strg_id = g.user[0]['strg_id'] ## user = (user, token)
     if not request.get_json():
         abort(400)
     data = request.get_json(force=True)
-    table = 'CAR_LOG'
-    if data.get('strg_id') is not None:
-        data.pop('strg_id')
+    if data.get('car_id') is not None:
+        data.pop('car_id')
+    table = 'CAR'
     c = g.mysql_db.cursor()
     try:
-       id = insert_db(c, data, table)
+        id = insert_db(c, data, table)
+        insert_db(c, {'car_id': id, 'strg_id': strg_id}, '`STORED`')
     except (g.mysql_db.Error, g.mysql_db.Warning) as e:
         print(e)
         return jsonify({"status": "Error", "message": str(e)}), 500
 
     g.mysql_db.commit()
     c.close()
-    return jsonify({'strg_id': id})
+    return jsonify({'car_id': id})
+
+
+@REQUEST_API.route('/job_log', methods=['POST'])
+@auth.login_required
+def log_job():
+    
+    if not request.get_json():
+        abort(400)
+    data = request.get_json(force=True)
+    user_id = g.user[0]['user_id'] ## user = (user, token)
+    car_id = data.get('car_id')
+    rtn_id = data.get('rtn_id')
+    tasks = data.get('tasks')
+    table = 'CAR_LOG'
+    c = g.mysql_db.cursor()
+    try:
+        car_status = True
+        for task in tasks: 
+            car_log = {
+                "car_id": car_id,
+                "rtn_id": rtn_id,
+                "task_id": task['task_id'],
+                "task_value": task['task_value'],
+                "notes": task['notes'],
+                "user_id": user_id,
+                "task_status": task['task_status'],
+                "task_date": datetime.now()
+            }
+            if task['task_status'] is False:
+                car_status= False
+            id = insert_db(c, car_log, table)
+            if task['pictures'] is not None:
+                for pic in task['pictures']:
+                    insert_db(c, {'log_id': id, 'image': pic}, '`CAR_LOG_PICS`')
+        update_db(c, {"status": car_status}, "CAR", "car_id={}".format(car_id))
+    except (g.mysql_db.Error, g.mysql_db.Warning) as e:
+        print(e)
+        return jsonify({"status": "Error", "message": str(e)}), 500
+
+    g.mysql_db.commit()
+    c.close()
+    return jsonify({'car_id': id})
+
+  
+
 
 ## user service: 
 @REQUEST_API.route('/user', methods=['GET'])
@@ -553,7 +599,7 @@ def insert_db(c, data, table):
     placeholders = ', '.join(['%s'] * len(data))
     columns = ', '.join(data.keys())
     sql = "INSERT INTO %s ( %s ) VALUES ( %s )" % (table, columns, placeholders)
-
+    print(sql)
     # valid in Python 3
     c.execute(sql, list(data.values()))
     id = c.lastrowid

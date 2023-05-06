@@ -483,12 +483,45 @@
     "/jobs": {
       "get": {
         "tags": [
-          "Gob Request"
+          "Job Request"
         ],
         "summary": "Returns storage jobs",
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/job_log": {
+      "post": {
+        "tags": [
+          "Job Request"
+        ],
+        "summary": "Create a log for a task by car ID ",
+        "requestBody": {
+          "description": "task_log Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/tasks_log"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
           }
         }
       }
@@ -540,7 +573,7 @@
         }
       }
     },
-    "/user/{id}":{
+    "/user/{id}": {
       "put": {
         "tags": [
           "User Request"
@@ -631,6 +664,39 @@
           }
         }
       }
+    },
+    "/check-in": {
+      "post": {
+        "tags": [
+          "Check-in Request"
+        ],
+        "summary": "Check-in a new car to storage",
+        "requestBody": {
+          "description": "Car Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/vehicle"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
     }
   },
   "components": {
@@ -699,13 +765,48 @@
             "type": "number",
             "format": "number"
           },
+          "model": {
+            "type": "string",
+            "format": "string"
+          },
           "color": {
             "type": "string",
             "format": "string"
           },
-          "arraival_date": {
+          "arrival_date": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
+          },
+          "storage_location": {
+            "type": "string",
+            "format": "string"
+          },
+          "FL": {
+            "type": "string",
+            "format": "string"
+          },
+          "FR": {
+            "type": "string",
+            "format": "string"
+          },
+          "RR": {
+            "type": "string",
+            "format": "string"
+          },
+          "RL": {
+            "type": "string",
+            "format": "string"
+          },
+          "batt_green": {
+            "type": "boolean"
+          },
+          "batt_voltage": {
+            "type": "string",
+            "format": "string"
+          },
+          "batt_model": {
+            "type": "string",
+            "format": "string"
           }
         }
       },
@@ -748,89 +849,132 @@
           }
         }
       },
-      "routine_post": {
+      "tasks_log": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "format": "string"
+          "car_id": {
+            "type": "number",
+            "format": "number"
           },
-          "model": {
-            "type": "string",
-            "format": "string"
-          },
-          "tasks": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
-          }
-        }
-      },
-      "routine": {
-        "type": "object",
-        "properties": {
           "rtn_id": {
             "type": "number",
             "format": "number"
           },
-          "name": {
-            "type": "string",
-            "format": "string"
-          },
-          "model": {
-            "type": "string",
-            "format": "string"
-          },
           "tasks": {
             "type": "array",
-            "$ref": "#/components/schemas/task"
-          }
-        }
-      },
-      "routines": {
-        "type": "array",
-        "properties": {
-          "routine": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/routine"
+            "items": {
+              "type": "object",
+              "properties": {
+                "task_id": {
+                  "type": "number",
+                  "format": "number"
+                },
+                "task_status": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "task_value": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "notes": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "pictures": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
             }
           }
         }
-      },
-      "user": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "format": "string"
-          },
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "password": {
-            "type": "string",
-            "format": "string"
-          },
-          "strg_id": {
-            "type": "number",
-            "format": "intger"
-          },
-          "role": {
-            "type": "string",
-            "format": "string"
+      }
+    },
+    "routine_post": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "format": "string"
+        },
+        "model": {
+          "type": "string",
+          "format": "string"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "integer"
           }
         }
-      },
-      "token": {
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string",
-            "format": "string"
+      }
+    },
+    "routine": {
+      "type": "object",
+      "properties": {
+        "rtn_id": {
+          "type": "number",
+          "format": "number"
+        },
+        "name": {
+          "type": "string",
+          "format": "string"
+        },
+        "model": {
+          "type": "string",
+          "format": "string"
+        },
+        "tasks": {
+          "type": "array",
+          "$ref": "#/components/schemas/task"
+        }
+      }
+    },
+    "routines": {
+      "type": "array",
+      "properties": {
+        "routine": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/components/schemas/routine"
           }
+        }
+      }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "format": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "password": {
+          "type": "string",
+          "format": "string"
+        },
+        "strg_id": {
+          "type": "number",
+          "format": "intger"
+        },
+        "role": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "token": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "format": "string"
         }
       }
     }
