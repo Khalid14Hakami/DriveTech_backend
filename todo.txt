@@ -1,0 +1,21 @@
+
+
+csv upload
+fix create storage       X
+get storage by id        X
+
+----
+
+task cors 
+task require picture     X
+
+---- 
+
+user regiser with role   X
+update user              X
+delete user              X
+
+-----------
+
+
+
