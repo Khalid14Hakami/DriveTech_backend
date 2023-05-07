@@ -338,6 +338,7 @@ def get_jobs():
     print('getting user cars')
 
     for idx, car in enumerate(cars):
+        due = None
         lst_car_log = None
         q= """select * from TASK t, rtn_tsk rt 
             where rt.rtn_id = {}
@@ -354,6 +355,10 @@ def get_jobs():
                 lst_car_log = lst_car_log[0]
                 if  datetime.now() - lst_car_log['task_date'] > timedelta(days=10):
                     due_date = lst_car_log['task_date']+timedelta(days=14)
+                    if due is None:
+                        due = due_date
+                    elif due_date < due:
+                        due = due_date
                     task['due_date'] = due_date
                     if car.get('tasks') is not None:
                         car['tasks'].append(task)
@@ -365,6 +370,7 @@ def get_jobs():
                     car['tasks'].append(task)
                 else:
                     car['tasks'] = [task]
+        car['due_date'] = due
         if car.get('tasks') is None:
             cars.pop(idx)
     c.close()
