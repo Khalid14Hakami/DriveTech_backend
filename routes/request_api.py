@@ -337,7 +337,7 @@ def get_jobs():
     cars = query_result_to_json(c, q)
     print('getting user cars')
 
-    for car in cars:
+    for idx, car in enumerate(cars):
         lst_car_log = None
         q= """select * from TASK t, rtn_tsk rt 
             where rt.rtn_id = {}
@@ -366,7 +366,7 @@ def get_jobs():
                 else:
                     car['tasks'] = [task]
         if car.get('tasks') is None:
-            cars.pop(car)
+            cars.pop(idx)
     c.close()
     return jsonify(cars)
 
