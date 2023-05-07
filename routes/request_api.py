@@ -367,9 +367,9 @@ def get_jobs():
                 else:
                     car['tasks'] = [task]
             if due is None:
-                due = due_date
-            elif due_date < due:
-                due = due_date
+                due = task['due_date']
+            elif task['due_date'] < due:
+                due = task['due_date']
         car['due_date'] = due
         if car.get('tasks') is None:
             cars.pop(idx)
