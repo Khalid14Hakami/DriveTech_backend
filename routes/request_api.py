@@ -365,7 +365,7 @@ def get_jobs():
                     car['tasks'].append(task)
                 else:
                     car['tasks'] = [task]
-        if car['tasks'] is None or len(car['tasks']) == 0: 
+        if car.get('tasks') is None:
             cars.pop(car)
     c.close()
     return jsonify(cars)
