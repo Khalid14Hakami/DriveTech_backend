@@ -372,6 +372,7 @@ def get_jobs():
                 elif task['due_date'] < due:
                     due = task['due_date']
         car['due_date'] = due
+    for idx, car in enumerate(cars):
         if car.get('tasks') is None:
             cars.pop(idx)
     c.close()
