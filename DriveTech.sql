@@ -132,3 +132,8 @@ CREATE TABLE `CAR_LOG` (
   CONSTRAINT `CAR_LOG_FK_2` FOREIGN KEY (`task_id`) REFERENCES `TASK` (`task_id`),
   CONSTRAINT `CAR_LOG_FK_3` FOREIGN KEY (`rtn_id`) REFERENCES `ROUTINE` (`rtn_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+INSERT INTO `USER`
+(user_id, username, email, password, strg_id, `role`)
+VALUES(5, 'admin', 'admin@drivetech.com', '$6$rounds=656000$bJX.j8djJh6IkHm1$GJ5D9bopk4OJYfu7OEOXaLnLN7cp8F87ebuCBfsaENO7QRCcZvGa8uT0HKVJkdOc3/RriobkJw/zz3MwMk07o1', 13, NULL);

@@ -8,13 +8,17 @@ get storage by id        X
 
 task cors 
 task require picture     X
+routine return tasks  
+routine update possible db name error 
+routine delete 
 
+task if there is no job execlude car 
 ---- 
 
 user regiser with role   X
 update user              X
 delete user              X
-
+user phone role and status  
 -----------
 
 
