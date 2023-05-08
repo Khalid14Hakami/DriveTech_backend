@@ -332,6 +332,49 @@
         }
       }
     },
+    "/cars": {
+      "get": {
+        "tags": [
+          "Car Request"
+        ],
+        "summary": "Returns Cars in user storage",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/car"
+            }
+          }
+        }
+      }
+    },
+    "/cars/{id}": {
+      "get": {
+        "tags": [
+          "Car Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "routine id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "summary": "Returns Cars in user storage",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/car"
+            }
+          }
+        }
+      }
+    },
     "/routine": {
       "get": {
         "tags": [
@@ -850,6 +893,49 @@
         }
       },
       "tasks_log": {
+        "type": "object",
+        "properties": {
+          "car_id": {
+            "type": "number",
+            "format": "number"
+          },
+          "rtn_id": {
+            "type": "number",
+            "format": "number"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "task_id": {
+                  "type": "number",
+                  "format": "number"
+                },
+                "task_status": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "task_value": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "notes": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "pictures": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "car_history": {
         "type": "object",
         "properties": {
           "car_id": {

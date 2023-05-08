@@ -448,7 +448,39 @@ def log_job():
     c.close()
     return jsonify({'car_id': id})
 
-  
+
+## car service: 
+@REQUEST_API.route('/cars', methods=['GET'])
+@auth.login_required
+def get_user_cars():
+    strg_id = g.user[0]['strg_id'] ## user = (user, token)
+    c = g.mysql_db.cursor()
+    q= """select c.car_id, c.VIN, c.color, c.arrival_date, c.model
+                    from CAR c, `STORED` s
+                    where c.car_id = s.car_id 
+                    and s.strg_id = {} """.format(strg_id)
+
+    data = query_result_to_json(c, q)
+    c.close()
+
+    return jsonify(data)
+
+@REQUEST_API.route('/cars/<string:_id>', methods=['GET'])
+@auth.login_required
+def get_car_history(_id):
+    c = g.mysql_db.cursor()
+    q= """select * from car where car_id= {} """.format(_id)
+    data = query_result_to_json(c, q, one=True)
+
+    q= """
+    select t.name , cl.task_value, cl.task_date, cl.notes , cl.task_status  
+    from CAR_LOG cl, TASK t where car_id  = {} and cl.task_id = t.task_id ;
+    """.format(_id)
+
+    logs = query_result_to_json(c, q)
+    data['logs'] = logs
+    c.close()
+    return jsonify(data)
 
 
 ## user service: 
