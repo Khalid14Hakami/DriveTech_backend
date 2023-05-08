@@ -469,7 +469,7 @@ def get_user_cars():
 @auth.login_required
 def get_car_history(_id):
     c = g.mysql_db.cursor()
-    q= """select * from car where car_id= {} """.format(_id)
+    q= """select * from CAR where car_id= {} """.format(_id)
     data = query_result_to_json(c, q, one=True)
 
     q= """
